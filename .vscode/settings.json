@@ -1,6 +1,6 @@
 // Place your settings in this file to overwrite default and user settings.
 {
-  "editor.fontSize": 16,
+  "editor.fontSize": 20,
   "editor.fontFamily": "Calibri, Consolas, 'Courier New', monospace",
   "terminal.integrated.fontSize": 16,
   "editor.cursorBlinking": "blink"
