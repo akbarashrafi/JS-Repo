@@ -1,51 +1,72 @@
 import path from 'path';
-import webpack from'webpack';
-
+import webpack from 'webpack';
+import HtmlWebpackPlugin from'html-webpack-plugin';
 
 export default {
 
-  debug: true,
+    debug: true,
 
-  devtool: 'source-map',
+    devtool: 'source-map',
 
-  noInfo: false,
+    noInfo: false,
 
-  entry: [
+    entry:{
 
-    path.resolve(__dirname, 'dist')
+        vendor: path.resolve(__dirname, 'src/vendor'),
+        main: path.resolve(__dirname, 'src/index')
 
-  ],
+    },
 
-  target: 'web',
+    target: 'web',
 
-  output: {
+    output: {
 
-    path: path.resolve(__dirname, 'src'),
+        path: path.resolve(__dirname, 'dist'),
 
-    publicPath: '/',
+        publicPath: '/',
 
-    filename: 'bundle.js'
+        filename: '[name].js'
 
-  },
+    },
 
-  plugins: [
-//Eliminate duplicate packages when generating bundle
-new webpack.optimize.DedupePlugin(),
+    plugins: [
+      //useCommonChunkPlugin to create a seperate bundle
+//of vendor libraries so that they are cached separately
+new webpack.optimize.CommonsChunkPlugin({
+        name :'vendor'
+}),
+// CreateHtml file that includes reference to bundled js
+new HtmlWebpackPlugin({
+template: 'src/index.html',
+minify:{
+removeComments: true,
+collapseWhitespace: true,
+removeRedundantAttributes: true,
+useShortDoctype: true,
+removeEmptyAttributes: true,
+removeStyleLinkTypeAttributes: true,
+keepClosingSlash: true,
+minifyJs: true,
+minifyCSS: true,
+minifyURLs: true
+},
+inject: true
+}),
+        //Eliminate duplicate packages when generating bundle
+        new webpack.optimize.DedupePlugin(),
+        //minify Js
+        new webpack.optimize.UglifyJsPlugin()
+    ],
 
-    //Minify JS
-    new webpack.optimize.UglifyJsPlugin()
-  ],
+    module: {
 
-  module: {
+        loaders: [
 
-    loaders: [
+            { test: /\.js$/, exclude: /node_modules/, loaders: ['babel'] },
 
-      {test: /\.js$/, exclude: /node_modules/, loaders: ['babel']},
+            { test: /\.css$/, loaders: ['style', 'css'] }
 
-      {test: /\.css$/, loaders: ['style','css']}
+        ]
 
-    ]
-
-  }
-
+    }
 }
